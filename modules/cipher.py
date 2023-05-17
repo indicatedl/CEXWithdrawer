@@ -8,6 +8,7 @@ from cryptography.fernet import InvalidToken
 
 class PasswordEncryption:
     '''
+    https://t.me/cryptogovnozavod
     Encoding and decoding different python objects with password and salt
     :param str password: password
     :param str salt: salt
@@ -35,5 +36,5 @@ class PasswordEncryption:
             decrypted_data = cipher.decrypt(encrypted_data.encode())
             return pickle.loads(decrypted_data)
         except InvalidToken as e:
-            #print('Error: Invalid password, debil!')
+            #print('Error: Invalid password!')
             return None
