@@ -5,7 +5,8 @@ import csv
 from sys import stderr
 
 import ccxt
-import inquirer
+import inquirer 
+from inquirer.themes import load_theme_from_dict as loadth
 from termcolor import colored
 from loguru import logger
 from art import text2art
@@ -99,7 +100,7 @@ class Exchange:
                         "network": network
                     }
                 )
-            logger.success(colored(f"{address} | Успешно выведено {amount_to_withdrawal} {symbol_to_withdraw}", 'green', attrs=['bold', 'blink']))
+            logger.success(colored(f"{address} | Успешно выведено {amount_to_withdrawal} {symbol_to_withdraw}", 'light_green'))
             return True
         except ccxt.InsufficientFunds as e:
             logger.error(colored(f'{address} | Ошибка: Недостаточно средств на балансе!', 'light_red'))
@@ -107,6 +108,8 @@ class Exchange:
         except ccxt.ExchangeError as e:
             if 'not equal' in str(e) or 'not whitelisted' in str(e) or 'support-temp-addr' in str(e):
                 logger.error(colored(f'{address} | Ошибка: Cкорее всего, ваш адрес не добавлен в белый список для вывода с биржи!', 'light_red'))
+            elif 'not authorized' in str(e):
+                logger.error(colored(f'{address} | Ошибка: Cкорее всего, ваш api-ключ истек или не имеет доступа к выводу средств!', 'light_red'))
             elif 'network is matched' in str(e):
                 logger.error(colored(f'{address} | Ошибка: Адрес кошелька не подходит для данной сети!', 'light_red'))
             else:
@@ -163,6 +166,15 @@ if __name__ == "__main__":
     art = text2art(text="t.me/cryptogovnozavod", font="cybermedum")
     print(colored(art,'light_cyan'))
 
+    theme = {
+        "Question": {
+            "brackets_color": "bright_yellow"
+        },
+        "List": {
+            "selection_color": "bright_blue"
+        }
+    }
+    
     while True:
         if os.path.exists(api_keys_file):
             password = inquirer.prompt([inquirer.Password("password", message=colored("Введите ваш секретный пароль для доступа к данным api-ключей", 'light_yellow'))])['password']
@@ -189,12 +201,12 @@ if __name__ == "__main__":
             inquirer.List(
                 "action_type",
                 message=colored("Выберите действие", 'light_yellow'),
-                choices=[colored("Вывести средства", attrs=['bold', 'blink']), colored("Добавить или обновить api-ключи", attrs=['bold', 'blink']), colored("Справка", attrs=['bold', 'blink'])],
+                choices=["Вывести средства", "Добавить или обновить api-ключи", "Справка"],
             )
         ]
-        action_type = colored(inquirer.prompt(question)['action_type'])[8:-8]
+        action_type = inquirer.prompt(question,theme=loadth(theme))['action_type']
 
-        if 'Справка' in action_type:
+        if action_type == 'Справка':
             print(colored("Автор: https://t.me/cryptogovnozavod", 'light_cyan'))
             print(colored("Для начала работы необходимо поместить адреса кошельков в files/wallets.csv построчно в ПЕРВЫЙ столбец таблицы.", 'light_cyan'))
             print(colored("Если вы хотите вывести конкретные суммы на каждый кошелек, необходимо указать суммы для вывода ВТОРЫМ столбцом построчно, рядом с адресами.", 'light_cyan'))
@@ -210,10 +222,10 @@ if __name__ == "__main__":
             inquirer.List(
                 "ex_name",
                 message=colored(action_type, 'light_yellow'),
-                choices=[colored(ex.upper(), attrs=['bold', 'blink']) for ex in ex_list],
+                choices=[ex.upper() for ex in ex_list],
             )
         ]
-        ex_name = colored(inquirer.prompt(question)['ex_name']).lower()[8:-8]
+        ex_name = inquirer.prompt(question,theme=loadth(theme))['ex_name'].lower()
 
         if ex_name == 'okx':
             print(colored('[Информация] Внимание! Если вы находитесь в РФ и сайт OKX заблокирован для вас, для использования API необходимо добавить (иностранный) прокси в files/proxy.txt', 'light_cyan'), end='\n\n')
@@ -233,7 +245,7 @@ if __name__ == "__main__":
                 f.write(encrypted_data)
 
         if 'Добавить' in action_type:
-            print(colored('Данные о ключах успешно обновлены!', 'green', attrs=['bold', 'blink']), end='\n\n')
+            print(colored('Данные о ключах успешно обновлены!', 'light_green'), end='\n\n')
             continue
 
         exchange = Exchange(ex_name, api_keys[ex_name]['api_key'], api_keys[ex_name]['api_secret'], api_keys[ex_name]['password'])
@@ -251,10 +263,10 @@ if __name__ == "__main__":
             inquirer.List(
                 "network",
                 message=colored("Выберите сеть для вывода", 'light_yellow'),
-                choices=[colored(f"{chain[0].upper().ljust(12)}(fee: {f'{chain[1]:.8f}'.rstrip('0').rstrip('.')})", attrs=['bold', 'blink']) for chain in chain_list],
+                choices=[f"{chain[0].upper().ljust(12)}(fee: {f'{chain[1]:.8f}'.rstrip('0').rstrip('.')})" for chain in chain_list],
             )
         ]
-        network_name = inquirer.prompt(chain_select)['network']
+        network_name = inquirer.prompt(chain_select,theme=loadth(theme))['network']
         for i,elem in enumerate(chain_list):
             if elem[0].upper() in network_name:
                 network = chain_list[i]
@@ -263,10 +275,10 @@ if __name__ == "__main__":
             inquirer.List(
                 "withdraw_mode",
                 message=colored("Суммы для вывода", 'light_yellow'),
-                choices=[colored("Взять из файла с кошельками", attrs=['bold', 'blink']), colored("Вывести на все кошельки одинаковую сумму", attrs=['bold', 'blink']), colored("Вывести на все кошельки случайные суммы в некотором диапазоне", attrs=['bold', 'blink'])],
+                choices=["Взять из файла с кошельками", "Вывести на все кошельки одинаковую сумму", "Вывести на все кошельки случайные суммы в некотором диапазоне"],
             )
         ]
-        withdraw_question = inquirer.prompt(question)['withdraw_mode']
+        withdraw_question = inquirer.prompt(question,theme=loadth(theme))['withdraw_mode']
         withdraw_mode = 1 if 'файла' in withdraw_question else 2 if 'одинаковую' in withdraw_question else 3
 
         while True:
@@ -281,7 +293,10 @@ if __name__ == "__main__":
                     min_amount = float(inquirer.prompt([inquirer.Text("min_amount", message=colored("Введите минимальное количество монеты для вывода", 'light_yellow'))])['min_amount'].replace(',', '.').replace(' ', ''))
                     max_amount = float(inquirer.prompt([inquirer.Text("max_amount", message=colored("Введите максимальное количество монеты для вывода", 'light_yellow'))])['max_amount'].replace(',', '.').replace(' ', ''))
                     decimals = int(inquirer.prompt([inquirer.Text("decimals", message=colored("Сколько знаков после запятой использовать? (10.523 = 3 знака)", 'light_yellow'))])['decimals'].replace(',', '.').replace(' ', ''))
-                    print(colored(f'\n[Информация] Выбрано: Биржа - {ex_name.upper()}, Токен - {symbol}, Сеть - {network[0]}, Минимальная сумма - {round(min_amount,decimals)} {symbol}, Максимальная сумма - {round(max_amount,decimals)} {symbol}', 'light_cyan'))
+                    if round(min_amount,decimals) > min_amount or round(min_amount,decimals) == 0:
+                        print(colored(f'\nСлишком сильное округление числа, добавьте больше знаков после запятой!', 'light_red'), end='\n\n')
+                        continue
+                    print(colored(f'\n[Информация] Выбрано: Биржа - {ex_name.upper()}, Токен - {symbol}, Сеть - {network[0]}, Суммы - от {round(min_amount,decimals)} {symbol} до {round(max_amount,decimals)} {symbol}, Пример - {round(random.uniform(min_amount,max_amount),decimals)}', 'light_cyan'))
                     if min_amount < float(network[2]):
                         print(colored(f'\nМинимальная сумма для вывода в сети {network[0]} на бирже составляет {network[2]} {symbol}!', 'light_red'), end='\n\n')
                         continue
@@ -301,10 +316,10 @@ if __name__ == "__main__":
             inquirer.List(
                 "correct",
                 message=colored("Всё верно?", 'light_yellow'),
-                choices=[colored('Да', attrs=['bold', 'blink']), colored('Нет', attrs=['bold', 'blink'])],
+                choices=['Да', 'Нет'],
             )
         ]
-        if 'Нет' in inquirer.prompt(question)['correct']:
+        if inquirer.prompt(question,theme=loadth(theme))['correct'] == 'Нет':
             continue
 
         while True:
@@ -322,10 +337,10 @@ if __name__ == "__main__":
             inquirer.List(
                 "shuffle",
                 message=colored("Перемешать кошельки между собой?", 'light_yellow'),
-                choices=[colored('Да', attrs=['bold', 'blink']), colored('Нет', attrs=['bold', 'blink'])],
+                choices=['Да', 'Нет'],
             )
         ]
-        flag_wallets_shuffle = True if 'Да' in inquirer.prompt(question)['shuffle'] else False
+        flag_wallets_shuffle = True if inquirer.prompt(question,theme=loadth(theme))['shuffle'] == 'Да' else False
 
         print(colored('[Информация] Начинаю вывод средств...', 'light_cyan'), end='\n\n')
         main()
