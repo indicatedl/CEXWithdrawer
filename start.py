@@ -56,6 +56,10 @@ class Exchange:
                 for chain in coin_data['networks'].values():
                     if chain['withdraw'] == True:
                         network_name = chain['network']
+                        if network_name == 'Avalanche X':
+                            network_name = 'Avalanche X-Chain'
+                        if network_name == 'Avalanche C':
+                            network_name = 'Avalanche C-Chain'
                         withdraw_fee = float(chain['fee'])
                         withdraw_min = float(chain['limits']['withdraw']['min'])
                         chains.append([network_name, withdraw_fee, withdraw_min])
