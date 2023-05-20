@@ -238,6 +238,7 @@ if __name__ == "__main__":
             print()
             if ex_name == 'okx':
                 p = inquirer.prompt([inquirer.Password("p", message=colored("Вставьте ваш api-пароль (api-passphrase) для доступа к бирже (right click)", 'light_yellow'))])['p']
+                print()
             api_keys[ex_name] = {
                     'api_key': api_key, 
                     'api_secret': api_secret,
