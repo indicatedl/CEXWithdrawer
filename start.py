@@ -182,6 +182,7 @@ if __name__ == "__main__":
             cryptographer = PasswordEncryption(password, password[-1:-4:-1])
             with open(api_keys_file, 'r') as f:
                 api_keys = cryptographer.decrypt(f.read())
+                print(api_keys)
                 if not api_keys:
                     print(colored('Неверный пароль! Если забыли пароль, удалите файл encrypted_keys.txt и добавьте все api-ключи заного!', 'light_red'), end = '\n\n')
                     continue
@@ -235,10 +236,12 @@ if __name__ == "__main__":
             print()
             api_secret = inquirer.prompt([inquirer.Password("api_secret", message=colored("Вставьте ваш секретный ключ (SECRET KEY) для доступа к бирже (right click)", 'light_yellow'))])['api_secret']
             print()
+            if ex_name == 'okx':
+                p = inquirer.prompt([inquirer.Password("p", message=colored("Вставьте ваш api-пароль (api-passphrase) для доступа к бирже (right click)", 'light_yellow'))])['p']
             api_keys[ex_name] = {
                     'api_key': api_key, 
                     'api_secret': api_secret,
-                    'password': '-',
+                    'password': p if p else '-',
                 }
             with open(api_keys_file, 'w') as f:
                 encrypted_data = cryptographer.encrypt(api_keys)
