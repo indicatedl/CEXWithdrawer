@@ -239,6 +239,7 @@ if __name__ == "__main__":
             print()
             api_secret = inquirer.prompt([inquirer.Password("api_secret", message=colored("Вставьте ваш секретный ключ (SECRET KEY) для доступа к бирже (right click)", 'light_yellow'))])['api_secret']
             print()
+            p = False
             if ex_name == 'okx':
                 p = inquirer.prompt([inquirer.Password("p", message=colored("Вставьте ваш api-пароль (api-passphrase) для доступа к бирже (right click)", 'light_yellow'))])['p']
                 print()
