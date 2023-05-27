@@ -217,7 +217,7 @@ if __name__ == "__main__":
             print(colored("API-ключи необходимо будет добавить при первом выводе средств, затем всегда будет возможность обновить их.", 'light_cyan'))
             print(colored("Чтобы вставить API-ключ в поле для ввода в консоли надо использовать правую кнопку мыши, для IDE могут использоваться другие сочетания клавиш.", 'light_cyan'))
             print(colored("Чтобы не провоцировать антифрод бирж и не палить мульты, лучше выбирать большие промежутки времени между выводами средств", 'light_cyan'))
-            print(colored("При использовании OKX из РФ, если сайт заблокирован для вашего IP, необходимо добавить прокси в files/proxy.txt в указанном формате.", 'light_cyan'))
+            print(colored("При использовании OKX из РФ, если сайт заблокирован для вашего IP, необходимо добавить http-прокси в files/proxy.txt в указанном формате.", 'light_cyan'))
             print(colored("Мы НЕ НЕСЕМ ответственности за последствия использования скрипта, все риски всегда на Вас.", 'light_red'), end='\n\n')
             continue
 
@@ -232,7 +232,7 @@ if __name__ == "__main__":
         ex_name = inquirer.prompt(question,theme=loadth(theme))['ex_name'].lower()
 
         if ex_name == 'okx':
-            print(colored('[Информация] Внимание! Если вы находитесь в РФ и сайт OKX заблокирован для вас, для использования API необходимо добавить (иностранный) прокси в files/proxy.txt', 'light_cyan'), end='\n\n')
+            print(colored('[Информация] Внимание! Если вы находитесь в РФ и сайт OKX заблокирован для вас, для использования API необходимо добавить (иностранный) http-прокси в files/proxy.txt', 'light_cyan'), end='\n\n')
 
         if ex_name not in api_keys or 'Добавить' in action_type:
             api_key = inquirer.prompt([inquirer.Password("api_key", message=colored("Вставьте ваш API-ключ (API KEY) для доступа к бирже (right click)", 'light_yellow'))])['api_key']
