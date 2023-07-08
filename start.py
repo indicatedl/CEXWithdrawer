@@ -276,7 +276,7 @@ if __name__ == "__main__":
         ]
         network_name = inquirer.prompt(chain_select,theme=loadth(theme))['network']
         for i,elem in enumerate(chain_list):
-            if elem[0].upper() in network_name:
+            if elem[0].upper() == network_name.split('(fee')[0].rstrip(' '):
                 network = chain_list[i]
 
         question = [
