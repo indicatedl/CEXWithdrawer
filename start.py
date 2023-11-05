@@ -220,9 +220,6 @@ if __name__ == "__main__":
         ]
         ex_name = inquirer.prompt(question,theme=loadth(theme))['ex_name'].lower()
 
-        if ex_name == 'okx':
-            print(colored('[Информация] Внимание! Если вы находитесь в РФ и сайт OKX заблокирован для вас, для использования API необходимо добавить (иностранный) http-прокси в files/proxy.txt', 'light_cyan'), end='\n\n')
-
         if ex_name not in api_keys or 'Добавить' in action_type:
             api_key = inquirer.prompt([inquirer.Password("api_key", message=colored("Вставьте ваш API-ключ (API KEY) для доступа к бирже (right click)", 'light_yellow'))])['api_key']
             print()
