@@ -34,7 +34,7 @@ class Exchange:
             'secret': api_secret,
             'password': password,
             'enableRateLimit': True,
-            'proxies': get_proxy() if self.name == 'okx' else None,
+            'proxies': None,
             'options': {
                 'defaultType': 'spot'
             }
@@ -150,17 +150,6 @@ def main():
         logger.info(colored(f'Сплю {timing} секунд...', 'light_yellow'))
         time.sleep(timing)
 
-
-def get_proxy():
-    with open(proxy_file, 'r') as file:
-        proxy = file.read().replace('\n','')
-    if not proxy or len(proxy) == 20:
-        return None
-    proxies = {
-        "http": proxy,
-        "https": proxy,
-    }
-    return proxies
 
 
 if __name__ == "__main__":
