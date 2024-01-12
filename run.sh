@@ -21,22 +21,16 @@ install_python() {
     sudo apt update
     sudo apt install -y build-essential libssl-dev zlib1g-dev \
     libbz2-dev libreadline-dev libsqlite3-dev curl \
-    libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev git
+    libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
 
     pyenv install 3.10
     pyenv global 3.10
   fi
 
-  # Clone and set up the CEXWithdrawer project
-  if [ ! -d "CEXWithdrawer" ]; then
-    git clone https://github.com/indicatedl/CEXWithdrawer.git
-  fi
-  cd CEXWithdrawer || exit
   pip install -r requirements.txt
 }
 
 run_program() {
-  cd CEXWithdrawer || exit
   python start.py
 }
 
