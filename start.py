@@ -53,6 +53,12 @@ class Exchange:
                         withdraw_fee = float(chain['withdrawFee'])
                         withdraw_min = float(chain['withdrawMin'])
                         chains.append([network_name, withdraw_fee, withdraw_min])
+            elif self.name == 'kucoin':
+                if coin_data['withdraw'] == True:
+                    network_name = coin_data['id']
+                    withdraw_fee = float(coin_data['info']['withdrawalMinFee'])
+                    withdraw_min = float(coin_data['info']['withdrawalMinSize'])
+                    chains.append([network_name, withdraw_fee, withdraw_min])
             else:
                 for chain in coin_data['networks'].values():
                     if chain['withdraw'] == True:
@@ -233,7 +239,7 @@ if __name__ == "__main__":
             print(colored("Мы НЕ НЕСЕМ ответственности за последствия использования скрипта, все риски всегда на Вас.", 'light_red'), end='\n\n')
             continue
 
-        ex_list = ['binance', 'okx', 'bybit', 'mexc', 'huobi']  
+        ex_list = ['binance', 'okx', 'bybit', 'mexc', 'huobi', 'kucoin']  
         question = [
             inquirer.List(
                 "ex_name",
@@ -249,7 +255,7 @@ if __name__ == "__main__":
             api_secret = inquirer.prompt([inquirer.Password("api_secret", message=colored("Вставьте ваш секретный ключ (SECRET KEY) для доступа к бирже (right click)", 'light_yellow'))])['api_secret']
             print()
             p = False
-            if ex_name == 'okx':
+            if ex_name in ('okx','kucoin'):
                 p = inquirer.prompt([inquirer.Password("p", message=colored("Вставьте ваш api-пароль (api-passphrase) для доступа к бирже (right click)", 'light_yellow'))])['p']
                 print()
             api_keys[ex_name] = {
