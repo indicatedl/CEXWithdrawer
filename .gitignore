@@ -1,3 +1,6 @@
+files/encrypted_keys.txt
+files/done.csv
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

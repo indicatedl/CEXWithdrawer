@@ -16,6 +16,7 @@ from modules.cipher import PasswordEncryption
 
 wallets_file = 'files/wallets.csv'
 api_keys_file = 'files/encrypted_keys.txt'
+done_file = 'files/done.csv'
 log_file = 'logs/log.log'
 proxy_file = 'files/proxy.txt'
 
@@ -125,16 +126,31 @@ class Exchange:
 
 
 def main():
+    done_wallets = set()
+    skipped_wallets = 0
+
+    if os.path.exists(done_file):
+        with open(done_file, newline='') as csvfile:
+            reader = csv.reader(csvfile, delimiter=';')
+            for row in reader:
+                done_wallets.add(row[0])
+
     with open(wallets_file, newline='') as csvfile:
         reader = csv.reader(csvfile, delimiter=';')
         wallets = []
         for row in reader:
+            if row[0] in done_wallets:
+                skipped_wallets += 1
+                continue
             wallets.append(row)
+
+    logger.info(f'Skipped ({skipped_wallets}) wallets where funds have already been withdrawn.')
 
     if flag_wallets_shuffle:
         random.shuffle(wallets)
 
     for wallet in wallets:
+        status = False
         if withdraw_mode == 1:
             if len(wallet) > 1 and None not in wallet and '' not in wallet:
                 status = exchange.withdraw(wallet[0], wallet[1].replace(',', '.'), symbol, network[0], network[1])
@@ -144,8 +160,15 @@ def main():
             status = exchange.withdraw(wallet[0], round(amount,7), symbol, network[0], network[1])
         else:
             status = exchange.withdraw(wallet[0], round(random.uniform(min_amount,max_amount),decimals), symbol, network[0], network[1])
+
         if not status:
             return
+        
+        if status:
+            with open(done_file, 'a', newline='') as csvfile:
+                writer = csv.writer(csvfile, delimiter=';')
+                writer.writerow(wallet)
+
         timing = random.randint(min_delay, max_delay)
         logger.info(colored(f'Сплю {timing} секунд...', 'light_yellow'))
         time.sleep(timing)
