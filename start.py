@@ -17,7 +17,6 @@ from modules.cipher import PasswordEncryption
 wallets_file = 'files/wallets.csv'
 api_keys_file = 'files/encrypted_keys.txt'
 log_file = 'logs/log.log'
-proxy_file = 'files/proxy.txt'
 
 
 logger.remove()
@@ -55,11 +54,7 @@ class Exchange:
             else:
                 for chain in coin_data['networks'].values():
                     if chain['withdraw'] == True:
-                        network_name = chain['network']
-                        if network_name == 'Avalanche X':
-                            network_name = 'Avalanche X-Chain'
-                        if network_name == 'Avalanche C':
-                            network_name = 'Avalanche C-Chain'
+                        network_name = chain['id'].split(f'{symbol}-')[1]
                         withdraw_fee = float(chain['fee'])
                         withdraw_min = float(chain['limits']['withdraw']['min'])
                         chains.append([network_name, withdraw_fee, withdraw_min])
