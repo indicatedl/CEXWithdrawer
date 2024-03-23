@@ -39,7 +39,6 @@ install_python() {
       fi
     fi
 
-    pyenv uninstall 3.10
     pyenv install 3.10
     pyenv global 3.10
   fi
