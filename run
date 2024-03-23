@@ -5,6 +5,7 @@ install_python() {
     echo "Python 3.10 is already installed."
   else
     if command -v brew >/dev/null; then
+      brew install xz
       brew install pyenv
     else
       curl https://pyenv.run | bash
@@ -38,6 +39,7 @@ install_python() {
       fi
     fi
 
+    pyenv uninstall 3.10
     pyenv install 3.10
     pyenv global 3.10
   fi
