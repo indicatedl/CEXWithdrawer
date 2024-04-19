@@ -44,20 +44,12 @@ class Exchange:
         chains = [] 
         try:
             coin_data = self.exchange.fetch_currencies()[symbol]
-            if self.name == 'binance':
-                for chain in coin_data['networks']:
-                    if chain['withdrawEnable'] == True:
-                        network_name = chain['network']
-                        withdraw_fee = float(chain['withdrawFee'])
-                        withdraw_min = float(chain['withdrawMin'])
-                        chains.append([network_name, withdraw_fee, withdraw_min])
-            else:
-                for chain in coin_data['networks'].values():
-                    if chain['withdraw'] == True:
-                        network_name = chain['id'].split(f'{symbol}-')[1]
-                        withdraw_fee = float(chain['fee'])
-                        withdraw_min = float(chain['limits']['withdraw']['min'])
-                        chains.append([network_name, withdraw_fee, withdraw_min])
+            for chain in coin_data['networks'].values():
+                if chain['withdraw'] == True:
+                    network_name = chain['id']
+                    withdraw_fee = float(chain['fee'])
+                    withdraw_min = float(chain['limits']['withdraw']['min'])
+                    chains.append([network_name, withdraw_fee, withdraw_min])
             return chains
         except KeyError as e:
             print(colored(f"Такого символа нет на бирже! Попробуйте ввести снова.", 'light_red'))
