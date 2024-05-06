@@ -46,7 +46,7 @@ class Exchange:
             coin_data = self.exchange.fetch_currencies()[symbol]
             for chain in coin_data['networks'].values():
                 if chain['withdraw'] == True:
-                    network_name = chain['id']
+                    network_name = chain['id'].split(f"{symbol}-")[1] if f"{symbol}-" in chain['id'] else chain['id']
                     withdraw_fee = float(chain['fee'])
                     withdraw_min = float(chain['limits']['withdraw']['min'])
                     chains.append([network_name, withdraw_fee, withdraw_min])
