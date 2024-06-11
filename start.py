@@ -197,7 +197,7 @@ if __name__ == "__main__":
             print(colored("Мы НЕ НЕСЕМ ответственности за последствия использования скрипта, все риски всегда на Вас.", 'light_red'), end='\n\n')
             continue
 
-        ex_list = ['binance', 'okx', 'bybit', 'mexc', 'huobi']  
+        ex_list = ['binance', 'okx', 'bybit', 'mexc', 'huobi', 'coinex']
         question = [
             inquirer.List(
                 "ex_name",
