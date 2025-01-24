@@ -2,7 +2,10 @@ import time
 import random
 import os
 import csv
+import subprocess
 from sys import stderr
+
+update_ccxt()
 
 import ccxt
 import inquirer 
@@ -110,7 +113,13 @@ class Exchange:
             logger.error(colored(f"{address} | Unknown error: {e}", 'light_red'))
             return False
 
-
+def update_ccxt():
+    try:
+        print(f'Проверка обновлений библиотеки для работы с биржами ccxt...')
+        subprocess.check_output(["pip", "install", "--upgrade", "ccxt", "--quiet", "--disable-pip-version-check"])
+    except subprocess.CalledProcessError as e:
+        print(f'Ошибка обновления библиотеки ccxt с помощью PIP: {e}')
+        
 def main():
     with open(wallets_file, newline='') as csvfile:
         reader = csv.reader(csvfile, delimiter=';')
